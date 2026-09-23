@@ -232,11 +232,18 @@
               style="font-size: 0.85rem; font-weight: 700; color: var(--color-secondary);">Showing All Titles</span>
           </div>
 
-          <div class="scroll-nav-btns">
-            <button id="scroll-left" class="scroll-nav-btn" aria-label="Scroll left"><i
-                class="fa-solid fa-chevron-left"></i></button>
-            <button id="scroll-right" class="scroll-nav-btn" aria-label="Scroll right"><i
-                class="fa-solid fa-chevron-right"></i></button>
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <button id="favorites-filter-btn" class="btn-favorites-filter" aria-label="Toggle favorites filter">
+              <i class="fa-solid fa-heart"></i>
+              <span>My Favorites</span>
+              <span id="favorites-count" class="favorites-count-badge" style="display: none;">0</span>
+            </button>
+            <div class="scroll-nav-btns">
+              <button id="scroll-left" class="scroll-nav-btn" aria-label="Scroll left"><i
+                  class="fa-solid fa-chevron-left"></i></button>
+              <button id="scroll-right" class="scroll-nav-btn" aria-label="Scroll right"><i
+                  class="fa-solid fa-chevron-right"></i></button>
+            </div>
           </div>
         </div>
 
