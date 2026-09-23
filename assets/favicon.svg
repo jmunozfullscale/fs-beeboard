@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="100%" height="100%">
+  <defs>
+    <linearGradient id="fav-amber" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FDE68A" />
+      <stop offset="60%" stop-color="#D97706" />
+      <stop offset="100%" stop-color="#B45309" />
+    </linearGradient>
+    <linearGradient id="fav-wing" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FDE68A" />
+      <stop offset="100%" stop-color="#D97706" stop-opacity="0.8" />
+    </linearGradient>
+  </defs>
+
+  <!-- Dark Espresso Background Hexagon -->
+  <polygon points="32,2 58,16 58,48 32,62 6,48 6,16" 
+           fill="#1C1917" 
+           stroke="url(#fav-amber)" 
+           stroke-width="3" 
+           stroke-linejoin="round" />
+
+  <!-- Bee Wings -->
+  <path d="M 26 26 C 14 14, 6 22, 14 32 C 19 38, 25 33, 27 30 Z" fill="url(#fav-wing)" opacity="0.9"/>
+  <path d="M 38 26 C 50 14, 58 22, 50 32 C 45 38, 39 33, 37 30 Z" fill="url(#fav-wing)" opacity="0.9"/>
+
+  <!-- Meeple Icon (Center) -->
+  <path d="
+    M 32 14 
+    A 4.5 4.5 0 1 1 31.9 14 Z 
+    M 25 24 
+    C 27 23, 37 23, 39 24 
+    C 42 25, 46 29, 45 36 
+    L 48 50 
+    C 48.5 52, 43.5 52, 42.5 50 
+    L 38 42 
+    L 32 44 
+    L 26 42 
+    L 21.5 50 
+    C 20.5 52, 15.5 52, 16 50 
+    L 19 36 
+    C 18 29, 22 25, 25 24 Z" 
+    fill="url(#fav-amber)" 
+    stroke="#1C1917" 
+    stroke-width="1" />
+
+  <!-- Bee Stripe Accents -->
+  <path d="M 22 31 Q 32 35 42 31" stroke="#1C1917" stroke-width="2" stroke-linecap="round" fill="none" />
+  <path d="M 21 37 Q 32 41 43 37" stroke="#1C1917" stroke-width="2" stroke-linecap="round" fill="none" />
+</svg>
