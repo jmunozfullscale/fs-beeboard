@@ -484,6 +484,16 @@
               </div>
 
               <div class="form-field">
+                <label for="reserve-time"><i class="fa-solid fa-hourglass-half"></i> Reservation Duration</label>
+                <select id="reserve-time" required>
+                  <option value="60">1 Hour</option>
+                  <option value="120" selected>2 Hours</option>
+                  <option value="180">3 Hours</option>
+                  <option value="240">4 Hours</option>
+                </select>
+              </div>
+
+              <div class="form-field">
                 <label for="res-party"><i class="fa-solid fa-users"></i> Party Size</label>
                 <select id="res-party" required>
                   <option value="1 Player">1 Player (Solo Gaming)</option>
@@ -500,6 +510,14 @@
                   <option value="main">Main Gaming Lounge</option>
                   <option value="rpg">Private RPG & D&D Sanctuary</option>
                   <option value="cozy">Cozy Sofa & Coffee Corner</option>
+                </select>
+              </div>
+
+              <div class="form-field">
+                <label for="reserve-game-request"><i class="fa-solid fa-dice"></i> Request a Game (Optional)</label>
+                <select id="reserve-game-request">
+                  <option value="">No specific game</option>
+                  <!-- Populated dynamically by app.js -->
                 </select>
               </div>
 

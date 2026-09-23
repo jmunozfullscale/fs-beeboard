@@ -335,7 +335,20 @@ function initLibraryFilters() {
  */
 function initReservationForm() {
   const form = document.getElementById('table-reservation-form');
+  const gameSelect = document.getElementById('reserve-game-request');
+  const timeSelect = document.getElementById('reserve-time');
+
   if (!form) return;
+
+  // Populate the game select dropdown dynamically from gamesDatabase
+  if (gameSelect && typeof gamesDatabase !== 'undefined') {
+    gamesDatabase.forEach(game => {
+      const option = document.createElement('option');
+      option.value = game.id;
+      option.textContent = game.title;
+      gameSelect.appendChild(option);
+    });
+  }
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -343,10 +356,25 @@ function initReservationForm() {
     const name = document.getElementById('res-name').value;
     const date = document.getElementById('res-date').value;
     const time = document.getElementById('res-time').value;
+    const durationMins = timeSelect ? parseInt(timeSelect.value) : 120;
+    const requestedGameId = gameSelect ? gameSelect.value : '';
     const party = document.getElementById('res-party').value;
     const gmRequested = document.getElementById('res-gm-tutor').checked;
 
-    alert(`🐝 Reservation Confirmed!\n\nThank you, ${name}!\nYour table for ${party} is booked for ${date} at ${time}.\n${gmRequested ? '✓ Dedicated Game Master requested for rule tutorial.' : ''}\n\nWe look forward to seeing you at the Hive!`);
+    if (requestedGameId) {
+      const requestedGame = gamesDatabase.find(g => g.id === requestedGameId);
+      if (requestedGame) {
+        const durationMatch = requestedGame.duration.match(/(\d+)(?!.*\d)/);
+        const gameMaxMins = durationMatch ? parseInt(durationMatch[1]) : 0;
+        
+        if (durationMins < gameMaxMins) {
+          alert(`⚠️ WARNING: ${requestedGame.title} typically takes ${requestedGame.duration}. Your ${durationMins}-minute slot might not be long enough! Please select a longer duration.`);
+          return; // Prevent booking
+        }
+      }
+    }
+
+    alert(`🐝 Reservation Confirmed!\n\nThank you, ${name}!\nYour table for ${party} is booked for ${date} at ${time} for ${durationMins} minutes.\n${requestedGameId ? `✓ We will have ${gamesDatabase.find(g => g.id === requestedGameId).title} ready.` : ''}\n${gmRequested ? '✓ Dedicated Game Master requested for rule tutorial.' : ''}\n\nWe look forward to seeing you at the Hive!`);
     
     form.reset();
   });
