@@ -76,6 +76,66 @@ const gamesDatabase = [
   { id: 'riftforce', title: 'Riftforce', category: 'twoplayer', players: '2 Players Only', playerCount: '2P', duration: '30 mins', playtime: 'short', complexity: '2.0 / 5', desc: 'Elemental guild drafting and rift battle duel.', icon: 'fa-bolt', featured: false }
 ];
 
+// --- FAVORITES SYSTEM (localStorage Persistence) ---
+
+function getFavorites() {
+  try {
+    const stored = localStorage.getItem('beeboard_favorites');
+    if (!stored) return [];
+    const parsed = JSON.parse(stored);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (e) {
+    console.warn('Beeboard: Failed to parse favorites from localStorage:', e);
+    return [];
+  }
+}
+
+function saveFavorites(favorites) {
+  localStorage.setItem('beeboard_favorites', JSON.stringify(favorites));
+}
+
+function toggleFavorite(gameId) {
+  const favorites = getFavorites();
+  const index = favorites.indexOf(gameId);
+  if (index > -1) {
+    favorites.splice(index, 1);
+  } else {
+    favorites.push(gameId);
+  }
+  saveFavorites(favorites);
+
+  // Update heart button visual state in-place (avoids full re-render)
+  document.querySelectorAll(`.fav-btn[data-game-id="${gameId}"]`).forEach(btn => {
+    const isFav = isFavorite(gameId);
+    btn.classList.toggle('is-favorited', isFav);
+    const icon = btn.querySelector('i');
+    icon.className = isFav ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
+  });
+
+  updateFavoritesCount();
+
+  // If favorites-only view is active, re-render to remove unfavorited items
+  if (showFavoritesOnly) {
+    const favGames = gamesDatabase.filter(g => getFavorites().includes(g.id));
+    renderLibraryGames(favGames);
+  }
+}
+
+function isFavorite(gameId) {
+  return getFavorites().includes(gameId);
+}
+
+function updateFavoritesCount() {
+  const badge = document.getElementById('favorites-count');
+  const count = getFavorites().length;
+  if (badge) {
+    badge.textContent = count;
+    badge.style.display = count > 0 ? 'inline-flex' : 'none';
+  }
+}
+
+let showFavoritesOnly = false;
+
 // --- APP INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
   console.log('🐝 Beeboard Cafe Phase 3 Engine Online!');
@@ -87,6 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initLibraryFilters();
   initScrollerButtons();
   initReservationForm();
+  initFavorites();
 });
 
 /**
@@ -179,6 +240,9 @@ function renderStaffPicks() {
       <div class="game-card-header">
         <i class="fa-solid ${game.icon} game-icon-visual"></i>
         <span class="game-badge-tag">Staff Favorite</span>
+        <button class="fav-btn ${isFavorite(game.id) ? 'is-favorited' : ''}" data-game-id="${game.id}" aria-label="Toggle favorite">
+          <i class="${isFavorite(game.id) ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+        </button>
       </div>
       <div class="game-card-body">
         <h3 class="game-title">${game.title}</h3>
@@ -225,6 +289,9 @@ function renderLibraryGames(gamesList) {
     <div class="library-card">
       <div class="library-card-photo">
         <i class="fa-solid ${game.icon} library-photo-icon"></i>
+        <button class="fav-btn fav-btn-sm ${isFavorite(game.id) ? 'is-favorited' : ''}" data-game-id="${game.id}" aria-label="Toggle favorite">
+          <i class="${isFavorite(game.id) ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+        </button>
       </div>
       <h3 class="library-card-title">${game.title}</h3>
       <div class="library-card-stats">
@@ -270,7 +337,16 @@ function initLibraryFilters() {
   const playtimeBtns = document.querySelectorAll('[data-filter-playtime]');
   const searchInput = document.getElementById('hero-game-search');
 
+  function resetFavoritesFilter() {
+    showFavoritesOnly = false;
+    const favBtn = document.getElementById('favorites-filter-btn');
+    if (favBtn) favBtn.classList.remove('active');
+  }
+
   function applyFilters() {
+    // Reset favorites toggle when standard filters are used
+    resetFavoritesFilter();
+
     let filtered = gamesDatabase;
 
     if (activeCategory !== 'all') {
@@ -378,4 +454,41 @@ function initReservationForm() {
     
     form.reset();
   });
+}
+
+/**
+ * Favorites System: Event Delegation & Filter Toggle
+ */
+function initFavorites() {
+  // Global event delegation for all .fav-btn clicks (present and future)
+  document.addEventListener('click', (e) => {
+    const favBtn = e.target.closest('.fav-btn');
+    if (!favBtn) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    const gameId = favBtn.dataset.gameId;
+    toggleFavorite(gameId);
+  });
+
+  // "My Favorites" filter toggle in the library section
+  const favFilterBtn = document.getElementById('favorites-filter-btn');
+  if (favFilterBtn) {
+    favFilterBtn.addEventListener('click', () => {
+      showFavoritesOnly = !showFavoritesOnly;
+      favFilterBtn.classList.toggle('active', showFavoritesOnly);
+
+      if (showFavoritesOnly) {
+        const favIds = getFavorites();
+        const favGames = gamesDatabase.filter(g => favIds.includes(g.id));
+        renderLibraryGames(favGames);
+      } else {
+        renderLibraryGames(gamesDatabase);
+      }
+    });
+  }
+
+  // Initialize favorites count on page load
+  updateFavoritesCount();
 }
