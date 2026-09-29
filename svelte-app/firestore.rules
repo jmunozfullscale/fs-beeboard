@@ -1,0 +1,24 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function to check if the user is an admin
+    function isAdmin() {
+      return request.auth != null && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+    
+    // Board Games Collection
+    match /games/{gameId} {
+      // Anyone can read games (so the public website works)
+      allow read: if true;
+      // Only authenticated admins can add, edit, or delete games
+      allow write: if isAdmin();
+    }
+    
+    // Admins Collection
+    match /admins/{adminId} {
+      // Admins can read the admins collection, but nobody can write to it from the web client
+      allow read: if isAdmin();
+      allow write: if false; 
+    }
+  }
+}
