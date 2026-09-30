@@ -112,12 +112,12 @@
         {/if}
         <form on:submit|preventDefault={login}>
           <div style="margin-bottom: 1rem;">
-            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Email</label>
-            <input type="email" bind:value={email} required style="width: 100%; padding: 0.75rem; border: 1px solid var(--color-border); border-radius: 4px;">
+            <label for="admin-email" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Email</label>
+            <input id="admin-email" type="email" bind:value={email} required style="width: 100%; padding: 0.75rem; border: 1px solid var(--color-border); border-radius: 4px;">
           </div>
           <div style="margin-bottom: 1.5rem;">
-            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Password</label>
-            <input type="password" bind:value={password} required style="width: 100%; padding: 0.75rem; border: 1px solid var(--color-border); border-radius: 4px;">
+            <label for="admin-password" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Password</label>
+            <input id="admin-password" type="password" bind:value={password} required style="width: 100%; padding: 0.75rem; border: 1px solid var(--color-border); border-radius: 4px;">
           </div>
           <button type="submit" class="btn btn-primary" style="width: 100%;">Access Database</button>
         </form>
