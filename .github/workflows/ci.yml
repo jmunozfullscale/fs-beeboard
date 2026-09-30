@@ -1,0 +1,49 @@
+name: CI Tests
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  unit-tests:
+    name: Run Unit Tests (Vitest)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          
+      - name: Install Dependencies
+        run: npm ci
+        
+      - name: Run Vitest
+        run: npm run test:unit
+
+  e2e-tests:
+    name: Run E2E Tests (Cypress)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          
+      - name: Cypress E2E Testing
+        uses: cypress-io/github-action@v6
+        with:
+          # Automatically start the Vite dev server
+          start: npm run dev
+          # Wait for the Vite dev server to be accessible before running tests
+          wait-on: 'http://localhost:5173'
+          # We use the built-in cypress command, no need for custom run command unless required
