@@ -8,5 +8,5 @@
     <h4 style="margin: 0; color: var(--color-text-dark);">{game.title}</h4>
     <span style="font-size: 0.85rem; color: var(--color-text-muted);">{game.category} • {game.players} • {game.duration}</span>
   </div>
-  <button on:click={() => onDelete(game.id)} style="background: none; border: none; color: #e53935; cursor: pointer; padding: 0.5rem;"><i class="fa-solid fa-trash"></i></button>
+  <button on:click={() => onDelete(game.id)} style="background: none; border: none; color: #e53935; cursor: pointer; padding: 0.5rem;" aria-label="Delete Game"><i class="fa-solid fa-trash"></i></button>
 </div>

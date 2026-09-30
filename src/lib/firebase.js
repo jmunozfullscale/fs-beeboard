@@ -3,12 +3,12 @@ import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  projectId: "beeboard-877f2",
-  appId: "1:664021257599:web:8b53cbd75d8c870a9d5e4a",
-  storageBucket: "beeboard-877f2.firebasestorage.app",
-  apiKey: "[GCP_API_KEY]",
+  apiKey: "AIzaSyC0OZJlwnRiobvqcEx8h970NW72lyFKvmA",
   authDomain: "beeboard-877f2.firebaseapp.com",
+  projectId: "beeboard-877f2",
+  storageBucket: "beeboard-877f2.firebasestorage.app",
   messagingSenderId: "664021257599",
+  appId: "1:664021257599:web:8b53cbd75d8c870a9d5e4a",
   measurementId: "G-JDN6YDKZ4X"
 };
 
