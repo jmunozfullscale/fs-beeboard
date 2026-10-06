@@ -12,7 +12,7 @@
 Developers building modern frontend applications with Vite frequently struggle with CI setups because:
 1. Vite dev server uses `npm run dev` (not `npm start`), causing standard CI templates to hang or fail.
 2. Cypress requires coordinated waiting on the Vite server port (`wait-on: 'http://localhost:5173'`).
-3. Different projects use npm, pnpm, yarn, or bun, with disparate caching commands.
+3. Monorepos (e.g. `web/` subfolder) require explicit `working-directory` and `cache-dependency-path` settings.
 4. Slow monolithic CI pipelines waste runner minutes running unit and E2E tests sequentially.
 
 This reusable prompt template instructs the AI to inspect the project's lockfiles, scripts, ports, and configs before writing a single line of YAML, guaranteeing an accurate, split-job, cached GitHub Actions pipeline on the first try.
@@ -21,7 +21,7 @@ This reusable prompt template instructs the AI to inspect the project's lockfile
 
 ## 📁 Asset Contents
 - [prompt-template.md](file:///c:/Users/Full%20Scale/L3%20Accelerator/fs-beeboard/reusable-assets/vite-ci-pipeline-generator/prompt-template.md): The raw, copy-pasteable prompt template.
-- [evidence-testing.md](file:///c:/Users/Full%20Scale/L3%20Accelerator/fs-beeboard/reusable-assets/vite-ci-pipeline-generator/evidence-testing.md): Documented test runs across two distinct projects (Svelte+npm and React+TS+pnpm).
+- [evidence-testing.md](file:///c:/Users/Full%20Scale/L3%20Accelerator/fs-beeboard/reusable-assets/vite-ci-pipeline-generator/evidence-testing.md): Documented test runs across two real tasks (`fs-beeboard` and `training-repo/web`).
 
 ---
 
@@ -37,5 +37,5 @@ This reusable prompt template instructs the AI to inspect the project's lockfile
 | Requirement | Status | Details |
 | :--- | :---: | :--- |
 | **Clear name and one-line description** | ✅ | `vite-ci-pipeline-generator` — defined at the top of this document. |
-| **Evidence tested on a second real task** | ✅ | Tested on `fs-beeboard` (Svelte/npm) AND `react-ts-portal` (React/TS/pnpm). See [`evidence-testing.md`](file:///c:/Users/Full%20Scale/L3%20Accelerator/fs-beeboard/reusable-assets/vite-ci-pipeline-generator/evidence-testing.md). |
+| **Evidence tested on a second real task** | ✅ | Tested on `fs-beeboard` (Svelte/npm) AND `training-repo/web` (React/TS/npm monorepo). See [`evidence-testing.md`](file:///c:/Users/Full%20Scale/L3%20Accelerator/fs-beeboard/reusable-assets/vite-ci-pipeline-generator/evidence-testing.md). |
 | **Saved to your own folder** | ✅ | Saved in `reusable-assets/vite-ci-pipeline-generator/`. |

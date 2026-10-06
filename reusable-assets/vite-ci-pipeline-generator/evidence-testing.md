@@ -79,121 +79,98 @@ jobs:
           if-no-files-found: ignore
 ```
 
-### Observations & Validation:
-- Correctly avoided using `npm start` (which fails in Vite apps) and used `npm run dev`.
-- Properly configured `wait-on: 'http://localhost:5173'`.
-- Added concurrency controls to terminate outdated runs immediately.
-
 ---
 
-## 🎯 Test Run 2: Second, Different Real Task (`react-ts-portal`)
-- **Repository Context**: React 19 + TypeScript + Vite + PNPM + Vitest (in-source & component tests) + Cypress E2E with custom port `3000`
+## 🎯 Test Run 2: Second, Different Real Task (`training-repo/web`)
+- **Repository Location**: `C:\Users\Full Scale\training-repo\web`
+- **Repository Context**: Monorepo sub-project (`web/`), React 18 + Redux Toolkit + Zod + Vite 8.2 + Vitest 4.1 + TypeScript + Oxlint + npm
 - **Configuration Differences from Task 1**:
-  - Package Manager: `pnpm` with `pnpm-lock.yaml` (requires `pnpm/action-setup`)
-  - Node version: `20.x`
-  - Scripts: `"test": "vitest run --coverage"`, `"cy:run": "cypress run"`, `"dev": "vite --port 3000"`
-  - Port: `3000` instead of default `5173`
-  - TypeScript checking step: `"typecheck": "tsc --noEmit"`
+  - Directory Structure: Subfolder inside monorepo (`training-repo/web`)
+  - Framework & Tooling: React 18 + TypeScript (`tsc -b`) + Oxlint (`oxlint`) instead of Svelte/Sass
+  - Scripts: `"build": "tsc -b && vite build"`, `"lint": "oxlint"`, `"test": "vitest run"`
+  - E2E: No Cypress installed in this subfolder; pure Vitest unit/component suite
 
 ### Tech Stack Scan Performed by Prompt:
-1. Detected `pnpm-lock.yaml` -> Switched runner strategy to use `pnpm/action-setup@v3` + `cache: 'pnpm'`.
-2. Detected custom port `3000` in `vite.config.ts` -> Set `wait-on: 'http://localhost:3000'`.
-3. Detected `typecheck` script -> Added pre-flight type checking to unit test job to catch compile errors before test execution.
+1. Detected nested root: Configured `defaults.run.working-directory: ./web` or explicit `working-directory` commands.
+2. Detected `oxlint`: Added fast linting step (`npm run lint`).
+3. Detected TypeScript build: Added `npm run build` (`tsc -b && vite build`) to verify type stability.
+4. Detected unit test script: Mapped `npm test` (`vitest run`).
 
 ### Generated Output:
 ```yaml
-name: CI Pipeline
+name: Web CI Pipeline
 
 on:
   push:
     branches: [ "main", "master", "develop" ]
+    paths:
+      - 'web/**'
+      - '.github/workflows/web-ci.yml'
   pull_request:
     branches: [ "main", "master", "develop" ]
+    paths:
+      - 'web/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  lint-and-unit:
-    name: Typecheck & Vitest
+  lint-and-typecheck:
+    name: Lint & Build (Oxlint + TSC)
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./web
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v3
-        with:
-          version: 9
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: 'pnpm'
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: web/package-lock.json
 
       - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
+        run: npm ci
 
-      - name: Typecheck
-        run: pnpm run typecheck
+      - name: Run Oxlint
+        run: npm run lint
 
-      - name: Run Vitest with Coverage
-        run: pnpm run test
+      - name: TypeScript Build Verification
+        run: npm run build
 
-  e2e-tests:
-    name: Cypress E2E
+  unit-tests:
+    name: Unit Tests (Vitest)
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./web
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v3
-        with:
-          version: 9
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: 'pnpm'
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: web/package-lock.json
 
       - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
+        run: npm ci
 
-      - name: Cypress E2E Testing
-        uses: cypress-io/github-action@v6
-        with:
-          install: false
-          command: pnpm run cy:run
-          start: pnpm run dev
-          wait-on: 'http://localhost:3000'
-          wait-on-timeout: 120
-
-      - name: Upload Cypress Screenshots
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: cypress-screenshots-react
-          path: cypress/screenshots
-          if-no-files-found: ignore
-
-      - name: Upload Cypress Videos
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: cypress-videos-react
-          path: cypress/videos
-          if-no-files-found: ignore
+      - name: Run Vitest
+        run: npm run test
 ```
 
 ### Generalization Proof:
-| Capability | Task 1 (Svelte + npm) | Task 2 (React TS + pnpm) | Generalization Verification |
+| Capability | Task 1 (`fs-beeboard`) | Task 2 (`training-repo/web`) | Generalization Verification |
 | :--- | :--- | :--- | :--- |
-| **Package Manager** | `npm` / `npm ci` | `pnpm` / `pnpm install --frozen-lockfile` | Successfully adapted without manual editing |
-| **Port Detection** | `5173` | `3000` | Correctly detected custom Vite port configuration |
-| **Type Checking** | None (JS) | `pnpm run typecheck` | Seamlessly integrated pre-flight compilation step |
-| **Artifact Retention**| Screenshots on failure | Screenshots + Videos on failure | Preserved CI run performance while capturing debug info |
-| **Caching Mechanism**| `cache: 'npm'` | `cache: 'pnpm'` via pnpm action | Prevented re-downloading dependencies on every run |
+| **Directory Context** | Root-level project | Monorepo sub-directory (`./web`) | Automatically scoped paths and working directories |
+| **Framework & Lang** | Svelte 5 / JS | React 18 / TypeScript | Handled `tsc -b` build step and typed dependencies |
+| **Linting Tool** | Standard / none | Oxlint (`npm run lint`) | Included modern linter stage without manual config |
+| **Test Stack** | Vitest + Cypress E2E | Vitest Unit Suite | Flexibly adjusted jobs when E2E runner was not present |
+| **Cache Scoping** | Root lockfile | `web/package-lock.json` | Used `cache-dependency-path` correctly for nested project |

@@ -11,8 +11,9 @@
 ## 🎯 Purpose & Value
 Standard code coverage reports (line, statement, branch) give developers a false sense of security:
 - A line can be 100% "covered" by a test that makes no assertions.
-- Complex conditions can execute without checking boundary inflection points (e.g. testing `30` on `<= 30`, but never checking `31`).
-- Dead code paths or logical contradictions (e.g. checking `x < 0` after an unsigned regex match) remain undetected.
+- Complex conditions can execute without checking boundary inflection points.
+- Dead code paths or logical contradictions remain undetected.
+- Schemas or contracts can leave critical optional/nullable variants unverified.
 
 The `test-gap-analyzer` evaluates **behavioral depth, assertion fidelity, boundary transitions, and failure modes**, providing an actionable gap matrix and drop-in test cases.
 
@@ -20,7 +21,7 @@ The `test-gap-analyzer` evaluates **behavioral depth, assertion fidelity, bounda
 
 ## 📁 Asset Contents
 - [SKILL.md](file:///c:/Users/Full%20Scale/L3%20Accelerator/fs-beeboard/reusable-assets/test-gap-analyzer/SKILL.md): Complete Antigravity skill specification containing the 5-step analysis protocol and standardized output schema.
-- [evidence-testing.md](file:///c:/Users/Full%20Scale/L3%20Accelerator/fs-beeboard/reusable-assets/test-gap-analyzer/evidence-testing.md): Documented test runs across two real tasks: a pure algorithmic module (`gameCategorizer.js`) and a stateful reactive UI component (`Admin.svelte`).
+- [evidence-testing.md](file:///c:/Users/Full%20Scale/L3%20Accelerator/fs-beeboard/reusable-assets/test-gap-analyzer/evidence-testing.md): Documented test runs across two real tasks: `fs-beeboard` (`gameCategorizer.js`) and `training-repo/web` (`allocation.ts`).
 - Active Agent Skill: Registered directly at [`.agents/skills/test-gap-analyzer/SKILL.md`](file:///c:/Users/Full%20Scale/L3%20Accelerator/fs-beeboard/.agents/skills/test-gap-analyzer/SKILL.md) for native IDE discovery.
 
 ---
@@ -30,7 +31,7 @@ The `test-gap-analyzer` evaluates **behavioral depth, assertion fidelity, bounda
 ### Method A: Native Antigravity Skill Invocation
 Because this skill is installed in `.agents/skills/test-gap-analyzer/SKILL.md`, you can simply ask your agent in the IDE or CLI:
 > *"Run a test gap analysis on `src/lib/gameCategorizer.js` and its test file."*  
-> Or: *"Analyze test gaps for `src/lib/components/Admin.svelte`."*
+> Or: *"Analyze test gaps for `src/schemas/allocation.ts`."*
 
 The agent will automatically load the skill and output the standardized gap matrix.
 
@@ -43,5 +44,5 @@ Copy the contents of [`SKILL.md`](file:///c:/Users/Full%20Scale/L3%20Accelerator
 | Requirement | Status | Details |
 | :--- | :---: | :--- |
 | **Clear name and one-line description** | ✅ | `test-gap-analyzer` — defined at top of this document and in `SKILL.md`. |
-| **Evidence tested on a second real task** | ✅ | Tested on `gameCategorizer.js` (pure logic) AND `Admin.svelte` (stateful UI). See [`evidence-testing.md`](file:///c:/Users/Full%20Scale/L3%20Accelerator/fs-beeboard/reusable-assets/test-gap-analyzer/evidence-testing.md). |
+| **Evidence tested on a second real task** | ✅ | Tested on `fs-beeboard` (`gameCategorizer.js`) AND `training-repo/web` (`allocation.ts`). See [`evidence-testing.md`](file:///c:/Users/Full%20Scale/L3%20Accelerator/fs-beeboard/reusable-assets/test-gap-analyzer/evidence-testing.md). |
 | **Saved to your own folder** | ✅ | Saved in `reusable-assets/test-gap-analyzer/` and `.agents/skills/test-gap-analyzer/`. |
