@@ -4,13 +4,10 @@
 
         <!-- Hero Content Column -->
         <div class="hero-content">
-          <div class="hero-badge">
-            <i class="fa-solid fa-hexagon-nodes"></i>
-            <span>Your Board Game & Coffee Sanctuary</span>
-          </div>
+          <!-- Badge removed -->
 
-          <h1 class="hero-title">
-            Gather Around <span class="text-gradient">the Hive.</span>
+          <h1 class="hero-title" style="text-shadow: 4px 4px 0px var(--color-tertiary);">
+            Gather Around <span class="highlight-block">the Hive.</span>
           </h1>
 
           <p class="hero-subtitle">
@@ -70,16 +67,53 @@
               alt="Cozy board game cafe interior with custom oak tables, coffee, and game shelf">
 
             <div class="hero-image-badge">
-              <div class="badge-icon">
-                <i class="fa-solid fa-graduation-cap"></i>
-              </div>
-              <div class="badge-text">
-                <strong>Friendly Game Masters</strong>
-                <p>Zero rulebook reading required! We set up & teach.</p>
-              </div>
-            </div>
+                          <div class="badge-icon">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                          </div>
+                          <div class="badge-text">
+                            <strong>Friendly Game Masters</strong>
+                            <p>Zero rulebook reading required! We set up & teach.</p>
+                          </div>
+                        </div>
           </div>
         </div>
 
       </div>
     </section>
+
+<style>
+  .hero-title { text-shadow: 4px 4px 0px var(--color-tertiary); }
+  .highlight-block {
+    display: inline-block;
+    background-color: var(--color-primary);
+    color: #fff;
+    padding: 0 1rem;
+    border: 3px solid #111827;
+    box-shadow: 4px 4px 0px #111827;
+    transform: rotate(-2deg);
+    text-shadow: none;
+    margin-left: 0.5rem;
+  }
+  :global(.hero-image-wrapper) { overflow: visible !important; }
+  :global(.hero-image-wrapper img) {
+    border-radius: calc(var(--radius-lg, 12px) - 4px) !important;
+  }
+  .hero-image-badge {
+    position: absolute;
+    bottom: -2.5rem;
+    right: -2.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 1.2rem 1.4rem;
+    background: var(--color-tertiary, #FDE68A);
+    border: 3px solid #111827;
+    border-radius: 0;
+    color: #111827;
+    z-index: 2;
+    box-shadow: 8px 8px 0px #111827;
+  }
+  .badge-icon { font-size: 1.6rem; }
+  .badge-text strong { display: block; font-weight: 900; font-size: 1.1rem; }
+  .badge-text p { margin: 0; font-size: 0.9rem; }
+</style>

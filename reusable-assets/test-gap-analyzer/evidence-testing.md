@@ -51,118 +51,88 @@ describe('gameCategorizer Gap Tests', () => {
   });
 });
 ```
-```
 
----
-
-## 🎯 Test Run 2: Second, Different Real Task (`training-repo/web`)
-- **Repository Location**: `C:\Users\Full Scale\training-repo\web`
-- **Source Under Test**: `training-repo/web/src/schemas/allocation.ts` (Zod schema contracts for `DeviceSchema`, `EngineerSchema`, and `BookingSchema`)
-- **Existing Test File**: `training-repo/web/src/test/allocationSchema.test.ts`
+## 🎯 Test Run 2: Second, Different Real Task (`Admin.svelte`)
+- **Repository Location**: `fs-beeboard`
+- **Source Under Test**: [`src/lib/components/Admin.svelte`](file:///c:/Users/Chino%20and%20Areli/Beeboard/fs-beeboard/src/lib/components/Admin.svelte) (Svelte component handling authentication and CRUD operations)
+- **Existing Test File**: [`src/lib/components/Admin.test.js`](file:///c:/Users/Chino%20and%20Areli/Beeboard/fs-beeboard/src/lib/components/Admin.test.js)
 
 ### Context:
-Unlike `gameCategorizer.js` (pure string parsing logic in Svelte), `allocation.ts` defines domain data contracts, validation schemas (Zod), and nullable/optional relations across enterprise booking entities in React/TypeScript.
+Unlike `gameCategorizer.js` (pure string parsing logic), `Admin.svelte` handles UI state transitions, asynchronous data fetching from Firebase services, and user interaction within a dashboard context.
 
 ### Skill Execution Output:
 
 ```markdown
-# 🧪 Test Gap Analysis Report: `allocation.ts`
+# 🧪 Test Gap Analysis Report: `Admin.svelte`
 
 ## 1. Executive Summary
-- **Source File**: `training-repo/web/src/schemas/allocation.ts`
-- **Test File**: `training-repo/web/src/test/allocationSchema.test.ts`
-- **Behavioral Coverage**: Critical Gap (~35% of defined schema contracts tested)
+- **Source File**: `src/lib/components/Admin.svelte`
+- **Test File**: `src/lib/components/Admin.test.js`
+- **Behavioral Coverage**: Low (~20% of component behavior tested)
 - **Key Vulnerabilities**: 
-  1. `DeviceSchema` and `EngineerSchema` have ZERO tests in the existing test file.
-  2. `BookingSchema` tests only check happy path strings and valid enum values; completely missing optional/nullable field handling (`createdOn`, `payload`) and integer constraints.
-  3. No semantic validation for temporal ordering (`endDate` before `startDate`).
+  1. The "logged in" dashboard state is entirely untested.
+  2. Core CRUD behaviors (fetching, adding, deleting games) are completely unverified by integration tests.
+  3. `logout` functionality is absent from the test suite.
+  4. Error handling paths for adding and deleting games (using global `alert()`) are completely unverified.
 
 ## 2. Behavioral Gap Matrix
 | Category | Source Location | Existing Coverage | Identified Gap / Risk | Priority |
 | :--- | :--- | :--- | :--- | :--- |
-| Untested Contract | Lines 3-10: `DeviceSchema` | None | Completely untested: missing type checks for `deviceId`, `assetTag`, and nullable fields | Critical |
-| Untested Contract | Lines 12-18: `EngineerSchema` | None | Completely untested: missing type checks for `engineerId`, `fullName`, `email` | Critical |
-| Optional / Nullable | Lines 27-28: `createdOn`, `payload` | Tested with valid strings | Never tested with `null`, `undefined`, or omitted keys | High |
-| Numeric Invariant | Lines 21-23: `bookingId`, `deviceId` | Tested with `1`, `10`, `20` | Never tested with non-integer numbers (e.g. `1.5`), negative numbers, or `NaN` | Medium |
-| Temporal Invariant | Lines 24-25: `startDate`, `endDate` | Tested with valid ISO strings | Zod validates datetime format, but does not enforce `startDate < endDate`. Inverted dates pass parsing unnoticed. | High |
+| Authenticated State | Line 68-81 | None | Never verifies that `AddGameForm`, `GameList`, and `Logout` render when a user is logged in. | Critical |
+| Lifecycle/Data Fetch | Line 17-19: `fetchGames()` | None | Doesn't test if games are fetched and displayed when the auth state changes to logged in. | High |
+| User Action (Logout) | Line 35: `handleLogout()` | None | Does not verify the logout button calls the logout service and returns to login view. | High |
+| State Mutation (Add) | Line 43: `handleAddGame()` | None | Never tests adding a game updates the local `games` array correctly. Missing error path testing (alert on failure). | Medium |
+| State Mutation (Delete)| Line 52: `handleDeleteGame()` | None | Never tests that confirming deletion removes the item from the list. | Medium |
 
 ## 3. High-Value Test Additions to Close Gaps
-```typescript
-import { describe, it, expect } from 'vitest';
-import { DeviceSchema, EngineerSchema, BookingSchema } from '../schemas/allocation';
+\`\`\`javascript
+import { render, fireEvent, screen, waitFor } from '@testing-library/svelte';
+import { vi } from 'vitest';
+import Admin from './Admin.svelte';
+import * as adminService from '../services/adminService.js';
 
-describe('Allocation Schemas - Gap Coverage', () => {
-  describe('DeviceSchema (Previously Untested)', () => {
-    it('accepts valid device and handles nullable optional fields', () => {
-      const valid = {
-        deviceId: 101,
-        assetTag: 'MAC-2026-01',
-        kind: 'Laptop',
-        status: 'Available',
-        purchasedOn: null,
-        notes: undefined,
-      };
-      const result = DeviceSchema.safeParse(valid);
-      expect(result.success).toBe(true);
-    });
+// Mock the adminService to test component behavior directly
+vi.mock('../services/adminService.js', () => ({
+  login: vi.fn(),
+  logout: vi.fn(),
+  loadGames: vi.fn(() => Promise.resolve([{ id: '1', title: 'Test Game' }])),
+  addGame: vi.fn(),
+  deleteGame: vi.fn(),
+}));
 
-    it('rejects device missing required string fields', () => {
-      const invalid = { deviceId: 101 };
-      const result = DeviceSchema.safeParse(invalid);
-      expect(result.success).toBe(false);
-    });
+describe('Admin Dashboard Behavior Gaps', () => {
+  it('renders dashboard and fetches games when user logs in successfully', async () => {
+    // Note: requires setting up the auth state listener mock to emit a logged-in user
+    // Testing this verifies the main application transition works.
   });
 
-  describe('EngineerSchema (Previously Untested)', () => {
-    it('validates required engineer properties', () => {
-      const valid = {
-        engineerId: 42,
-        fullName: 'Jane Doe',
-        office: 'HQ',
-        email: 'jane@fullscale.io',
-      };
-      expect(EngineerSchema.safeParse(valid).success).toBe(true);
-    });
+  it('handles game deletion and updates list', async () => {
+    // Requires a logged-in state setup
+    window.confirm = vi.fn(() => true); // Mock confirm dialog
+    adminService.deleteGame.mockResolvedValueOnce();
+    
+    // Trigger delete action from GameList child component...
+    // Verify deleteGameService is called with correct ID
+    // Verify game is removed from the DOM
   });
 
-  describe('BookingSchema Invariant Gaps', () => {
-    it('accepts omitted or null optional fields', () => {
-      const minimal = {
-        bookingId: 1,
-        deviceId: 10,
-        engineerId: 20,
-        startDate: '2026-09-01T09:00:00Z',
-        endDate: '2026-09-08T18:00:00Z',
-        status: 'Confirmed' as const,
-        createdOn: null,
-      };
-      expect(BookingSchema.safeParse(minimal).success).toBe(true);
-    });
-
-    it('reveals inverted date ranges pass Zod without schema refinement', () => {
-      const invertedDates = {
-        bookingId: 1,
-        deviceId: 10,
-        engineerId: 20,
-        startDate: '2026-09-08T18:00:00Z',
-        endDate: '2026-09-01T09:00:00Z', // END BEFORE START
-        status: 'Confirmed' as const,
-      };
-      // Highlights architectural gap: Zod format check passes, but business logic fails
-      const parsed = BookingSchema.safeParse(invertedDates);
-      expect(parsed.success).toBe(true); 
-    });
+  it('shows alert on failed game addition', async () => {
+    // Requires a logged-in state setup
+    window.alert = vi.fn();
+    adminService.addGame.mockRejectedValueOnce(new Error('Network error'));
+    
+    // Trigger add action...
+    // Verify alert is called with "Error adding game: Network error"
   });
 });
-```
+\`\`\`
 ```
 
----
 
 ## 📊 Summary of Generalization Verification
 
-| Dimension | Real Task 1: `fs-beeboard` | Real Task 2: `training-repo/web` | Generalization Verification |
+| Dimension | Real Task 1: `fs-beeboard` (`gameCategorizer.js`) | Real Task 2: `fs-beeboard` (`Admin.svelte`) | Generalization Verification |
 | :--- | :--- | :--- | :--- |
-| **Code Type** | Pure string manipulation utility | Enterprise schema validation contracts (Zod) | Proved applicability across utility functions & data models |
-| **Defect Discovery** | Unreachable code branch (`minutes < 0`) & zero-player bug | Two entire unverified schemas (`Device`, `Engineer`) + temporal date anomaly | Uncovered high-severity gaps in both codebases |
-| **Output Applicability** | Generated Vitest assertions for edge values | Generated TypeScript/Vitest test blocks with schema mocks | Immediately runnable test code produced |
+| **Code Type** | Pure string manipulation utility | Stateful UI Component (Svelte) & Async Services | Proved applicability across utility functions & asynchronous UI components |
+| **Defect Discovery** | Unreachable code branch (`minutes < 0`) & zero-player bug | Missing coverage for entire authenticated application state & error paths | Uncovered high-severity gaps in both logic and UI integration tests |
+| **Output Applicability** | Generated Vitest assertions for edge values | Generated Vitest integration test stubs with service mocking strategies | Extracted test plans that directly address UI component behavior |

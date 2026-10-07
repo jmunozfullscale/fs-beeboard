@@ -43,8 +43,8 @@
 <header id="main-header">
   <div class="container nav-wrapper">
     <a href="#" class="logo-brand" aria-label="Beeboard Cafe Homepage">
-      <img src="assets/logo.svg" alt="Beeboard Geometric Logo" class="logo-img">
-      <span class="logo-text">Bee<span class="text-gradient">board</span></span>
+      <div class="logo-icon-box"><i class="fa-solid fa-dice-d20"></i></div>
+      <span class="logo-text">Bee<span class="logo-text-highlight">board</span></span>
     </a>
 
     <!-- Desktop Navigation Links -->
@@ -69,3 +69,44 @@
     </div>
   </div>
 </header>
+
+<style>
+  .logo-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    transition: transform 0.15s ease;
+  }
+  .logo-brand:hover { transform: translate(-2px, -2px); }
+  .logo-brand:hover .logo-icon-box { box-shadow: 4px 4px 0px #111827; }
+  .logo-icon-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background-color: var(--color-primary, #D97706);
+    color: #111827;
+    border: 3px solid #111827;
+    font-size: 1.2rem;
+    box-shadow: 2px 2px 0px #111827;
+    transition: box-shadow 0.15s ease;
+  }
+  .logo-text {
+    font-family: var(--font-headline, sans-serif);
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #111827;
+    letter-spacing: -0.5px;
+    text-transform: uppercase;
+  }
+  .logo-text-highlight {
+    color: #FFFFFF;
+    text-shadow: 2px 2px 0px var(--color-primary, #D97706),
+    -1px -1px 0 #111827,
+    1px -1px 0 #111827,
+    -1px  1px 0 #111827,
+    1px  1px 0 #111827;
+  }
+</style>
